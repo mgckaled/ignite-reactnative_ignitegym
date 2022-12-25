@@ -7,13 +7,18 @@ export function HistoryCard() {
 			px={5}
 			py={4}
 			mb={3}
-			bg="gray.600"
+			bg="gray.500"
 			rounded="md"
 			alignItems="center"
 			justifyContent="space-between"
 		>
-			<VStack mr={5}>
-				<Heading color="white" fontSize="md" textTransform="capitalize">
+			<VStack mr={5} flex={1}>
+				<Heading
+					color="white"
+					fontSize="md"
+					textTransform="capitalize"
+					numberOfLines={1}
+				>
 					Costas
 				</Heading>
 
