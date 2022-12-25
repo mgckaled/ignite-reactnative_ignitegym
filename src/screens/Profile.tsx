@@ -1,3 +1,4 @@
+import * as FileSystem from 'expo-file-system'
 import * as ImagePicker from 'expo-image-picker'
 import {
 	Center,
@@ -8,7 +9,7 @@ import {
 	VStack
 } from 'native-base'
 import { useState } from 'react'
-import { TouchableOpacity } from 'react-native'
+import { Alert, TouchableOpacity } from 'react-native'
 
 import { Button } from '@components/Button'
 import { Input } from '@components/Input'
@@ -37,6 +38,18 @@ export function Profile() {
 			}
 
 			if (photoSelected.assets[0].uri) {
+				const photoInfo = await FileSystem.getInfoAsync(
+					photoSelected.assets[0].uri
+				)
+				console.log(photoInfo)
+
+				if (photoInfo.size && photoInfo.size / 1024 / 1024 > 5) {
+					return Alert.alert(
+						'Erro',
+						'Essa imagem é muito grande. Escolha uma de até 5MB.'
+					)
+				}
+
 				setUserPhoto(photoSelected.assets[0].uri)
 			}
 		} catch (error) {
