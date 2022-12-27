@@ -14,7 +14,7 @@ export function SignUp() {
 	const [password, setPassword] = useState('')
 	const [passwordConfirm, setPasswordConfirm] = useState('')
 
-	const { control } = useForm()
+	const { control, handleSubmit } = useForm()
 
 	const navigation = useNavigation()
 
@@ -22,13 +22,8 @@ export function SignUp() {
 		navigation.goBack()
 	}
 
-	function handleSignUp() {
-		console.log({
-			name,
-			email,
-			password,
-			passwordConfirm
-		})
+	function handleSignUp(data: any) {
+		console.log({ data })
 	}
 
 	return (
@@ -102,11 +97,16 @@ export function SignUp() {
 								secureTextEntry
 								onChangeText={onChange}
 								value={value}
+								onSubmitEditing={handleSubmit(handleSignUp)}
+								returnKeyType="send"
 							/>
 						)}
 					/>
 
-					<Button title="Criar e acessar" onPress={handleSignUp} />
+					<Button
+						title="Criar e acessar"
+						onPress={handleSubmit(handleSignUp)}
+					/>
 				</Center>
 
 				<Button
