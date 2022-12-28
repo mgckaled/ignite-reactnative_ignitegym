@@ -98,6 +98,21 @@ $ npx expo login
 $ npx expo whoami
 ```
 
+Scripts Backend:
+
+```bash
+# Rodar API em ambiente de desenvolvimento:
+$ npm run dev
+# Rodar API em ambiente de procução:
+$ npm start
+# Criar banco de dados
+$ npm run migrate
+# Inserir dados no banco de dados:
+$ npm run seed
+```
+
+Para visualizar a documentação da API, acesse [http://localhost:3333/api-docs](http://localhost:3333/api-docs) em ambiente de desenvolvimento.
+
 ## Tecnologias
 
 - [React Native](https://reactnative.dev/)
