@@ -1,7 +1,6 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useNavigation } from '@react-navigation/native'
 import { Center, Heading, Image, ScrollView, Text, VStack } from 'native-base'
-import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import * as yup from 'yup'
 
@@ -31,11 +30,6 @@ const signUpSchema = yup.object({
 })
 
 export function SignUp() {
-	const [name, setName] = useState('')
-	const [email, setEmail] = useState('')
-	const [password, setPassword] = useState('')
-	const [passwordConfirm, setPasswordConfirm] = useState('')
-
 	const {
 		control,
 		handleSubmit,
@@ -153,7 +147,7 @@ export function SignUp() {
 				<Button
 					title="Voltar para o login"
 					variant="outline"
-					mt={24}
+					mt={12}
 					onPress={handleGoBack}
 				/>
 			</VStack>
