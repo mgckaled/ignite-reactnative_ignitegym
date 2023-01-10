@@ -29,13 +29,13 @@ export function SignIn() {
 		navigation.navigate('signUp')
 	}
 
-	function handleSignIn({ email, password }: FormData) {
-		singIn(email, password)
+	async function handleSignIn({ email, password }: FormData) {
+		await singIn(email, password)
 	}
 
 	return (
 		<ScrollView
-			_contentContainerStyle={{ flexGrow: 1 }}
+			contentContainerStyle={{ flexGrow: 1 }}
 			showsVerticalScrollIndicator={false}
 		>
 			<VStack flex={1} px={10} pb={16}>
@@ -46,6 +46,7 @@ export function SignIn() {
 					resizeMode="contain"
 					position="absolute"
 				/>
+
 				<Center my={24}>
 					<LogoSvg />
 
@@ -58,6 +59,7 @@ export function SignIn() {
 					<Heading color="gray.100" fontSize="xl" mb={6} fontFamily="heading">
 						Acesse a conta
 					</Heading>
+
 					<Controller
 						control={control}
 						name="email"
@@ -72,6 +74,7 @@ export function SignIn() {
 							/>
 						)}
 					/>
+
 					<Controller
 						control={control}
 						name="password"
@@ -85,6 +88,7 @@ export function SignIn() {
 							/>
 						)}
 					/>
+
 					<Button title="Acessar" onPress={handleSubmit(handleSignIn)} />
 				</Center>
 
@@ -92,6 +96,7 @@ export function SignIn() {
 					<Text color="gray.100" fontSize="sm" mb={3} fontFamily="body">
 						Ainda não tem acesso?
 					</Text>
+
 					<Button
 						title="Criar Conta"
 						variant="outline"
