@@ -32,7 +32,7 @@ const signUpSchema = yup.object({
 	password: yup
 		.string()
 		.required('Informe a senha')
-		.min(8, 'A senha deve ter pelo menos 8 dígitos.'),
+		.min(6, 'A senha deve ter pelo menos 6 dígitos.'),
 	password_confirm: yup
 		.string()
 		.required('Confirme a senha.')
