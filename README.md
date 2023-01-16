@@ -48,6 +48,8 @@
 
 A ideia dessa aplicação é termos um app onde podemos consultar exercícios de academia. Nesse aplicativo vamos ter dois tipos de navegações, uma navegação em pilha para as rotas publicas e uma navegação em abas, na parte inferior para as rotas privadas. Para estilizar essa aplicação utilizaremos o NativeBase, uma biblioteca de componentes estilizados para facilitar na criação do app.
 
+Análises e comentários sobre o código [AQUI](/.github/docs/index.md).
+
 ## Layout
 
 O layout das telas da aplicação **Ignite Gym** foi desenvolvido pela equipe da **Rocketseat** através da ferramenta [**Figma**](https://www.figma.com).
