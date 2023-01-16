@@ -1,5 +1,9 @@
 # Utils
 
-[voltar](index.md) para página de index
+## Funções
+
+## Arquivos
+
+### [`AppError.ts`](../../mobile/src/utils/AppError.ts)
 
 [voltar](index.md) para página de index
