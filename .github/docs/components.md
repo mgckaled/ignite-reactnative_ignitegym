@@ -16,6 +16,8 @@
 
 ### [`ExerciseCard.tsx`](../../mobile/src/components/ExerciseCard.tsx)
 
+- source={{uri:`${api.defaults.baseURL}/exercise/thumb/${data.thumb}}}` - endereço base do servidor/exercise/thumb/nome da foto salva na api (`<../../api/exercise/thumb>`).
+
 ### [`Group.tsx`](../../mobile/src/components/Group.tsx)
 
 - `IPressableProps` - tipagem pré-definida que carrega todas as propriedades do componente nativo (`Pressable`).
