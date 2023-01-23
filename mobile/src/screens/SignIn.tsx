@@ -30,10 +30,8 @@ export function SignIn() {
 	const [isLoading, setIsLoading] = useState(false)
 
 	const { singIn } = useAuth()
-
-	const toast = useToast()
-
 	const navigation = useNavigation<AuthNavigatorRoutesProps>()
+	const toas = useToast()
 
 	const {
 		control,
@@ -56,7 +54,7 @@ export function SignIn() {
 				? error.message
 				: 'Não foi possível entrar. Tente novamente mais tarde.'
 
-			toast.show({
+			toas.show({
 				title,
 				placement: 'top',
 				bgColor: 'red.500'

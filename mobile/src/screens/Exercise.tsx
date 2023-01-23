@@ -31,11 +31,8 @@ type RouteParamsProps = {
 
 export function Exercise() {
 	const [sendingRegister, setSendingRegister] = useState(false)
-
 	const [isLoading, setIsLoading] = useState(true)
-
 	const [exercise, setExercise] = useState<ExerciseDTO>({} as ExerciseDTO)
-
 	const navigation = useNavigation<AppNavigatorRoutesProps>()
 
 	const route = useRoute()
@@ -126,12 +123,14 @@ export function Exercise() {
 
 					<HStack alignItems="center">
 						<BodySvg />
+
 						<Text color="gray.200" ml={1} textTransform="capitalize">
-							Costas
+							{exercise.group}
 						</Text>
 					</HStack>
 				</HStack>
 			</VStack>
+
 			{isLoading ? (
 				<Loading />
 			) : (
@@ -148,6 +147,7 @@ export function Exercise() {
 							rounded="lg"
 						/>
 					</Box>
+
 					<Box bg="gray.600" rounded="md" pb={4} px={4}>
 						<HStack
 							alignItems="center"
@@ -157,10 +157,12 @@ export function Exercise() {
 						>
 							<HStack>
 								<SeriesSvg />
+
 								<Text color="gray.200" ml="2">
 									{exercise.series} séries
 								</Text>
 							</HStack>
+
 							<HStack>
 								<RepetitionsSvg />
 
@@ -169,6 +171,7 @@ export function Exercise() {
 								</Text>
 							</HStack>
 						</HStack>
+
 						<Button
 							title="Marcar como realizado"
 							isLoading={sendingRegister}

@@ -11,7 +11,6 @@ import { ScreenHeader } from '@components/ScreenHeader'
 
 export function History() {
 	const [isLoading, setIsLoading] = useState(true)
-
 	const [exercises, setExercises] = useState<HistoryByDayDTO[]>([])
 
 	const toast = useToast()
@@ -27,6 +26,7 @@ export function History() {
 			const title = isAppError
 				? error.message
 				: 'Não foi possível carregar os detalhes do exercício'
+
 			toast.show({
 				title,
 				placement: 'top',
@@ -36,11 +36,13 @@ export function History() {
 			setIsLoading(false)
 		}
 	}
+
 	useFocusEffect(
 		useCallback(() => {
 			fetchHistory()
 		}, [])
 	)
+
 	return (
 		<VStack flex={1}>
 			<ScreenHeader title="Histórico" />

@@ -32,8 +32,8 @@ type FormDataProps = {
 }
 
 const signUpSchema = yup.object({
-	name: yup.string().required('Informe o nome'),
-	email: yup.string().required('Informe o e-mail').email('E-mail inválido'),
+	name: yup.string().required('Informe o nome.'),
+	email: yup.string().required('Informe o e-mail').email('E-mail inválido.'),
 	password: yup
 		.string()
 		.required('Informe a senha')
@@ -48,7 +48,6 @@ export function SignUp() {
 	const [isLoading, setIsLoading] = useState(false)
 
 	const toast = useToast()
-
 	const { singIn } = useAuth()
 
 	const {
@@ -70,7 +69,6 @@ export function SignUp() {
 			setIsLoading(true)
 
 			await api.post('/users', { name, email, password })
-
 			await singIn(email, password)
 		} catch (error) {
 			setIsLoading(false)

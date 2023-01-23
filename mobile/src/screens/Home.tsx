@@ -15,12 +15,12 @@ import { AppError } from '@utils/AppError'
 
 export function Home() {
 	const [isLoading, setIsLoading] = useState(true)
+
 	const [groups, setGroups] = useState<string[]>([])
 	const [exercises, setExercises] = useState<ExerciseDTO[]>([])
 	const [groupSelected, setGroupSelected] = useState('antebraço')
 
 	const toast = useToast()
-
 	const navigation = useNavigation<AppNavigatorRoutesProps>()
 
 	function handleOpenExerciseDetails(exerciseId: string) {
@@ -49,6 +49,7 @@ export function Home() {
 		try {
 			setIsLoading(true)
 			const response = await api.get(`/exercises/bygroup/${groupSelected}`)
+
 			setExercises(response.data)
 		} catch (error) {
 			const isAppError = error instanceof AppError
@@ -93,11 +94,12 @@ export function Home() {
 					/>
 				)}
 				horizontal
-				showsVerticalScrollIndicator={false}
-				_contentContainerStyle={{ px: 8 }}
+				showsHorizontalScrollIndicator={false}
+				_contentContainerStyle={{
+					px: 8
+				}}
 				my={10}
 				maxH={10}
-				minH={10}
 			/>
 
 			{isLoading ? (
