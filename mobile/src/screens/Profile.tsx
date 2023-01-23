@@ -63,7 +63,7 @@ export function Profile() {
 	const [userPhoto, setUserPhoto] = useState('https://github.com/mgckaled.png')
 
 	const toast = useToast()
-	const { user } = useAuth()
+	const { user, updateUserProfile } = useAuth()
 	const {
 		control,
 		handleSubmit,
@@ -87,12 +87,14 @@ export function Profile() {
 				allowsEditing: true
 			})
 
-			if (photoSelected.cancelled) {
+			if (photoSelected.canceled) {
 				return
 			}
 
-			if (photoSelected.uri) {
-				const photoInfo = await FileSystem.getInfoAsync(photoSelected.uri)
+			if (photoSelected.assets[0].uri) {
+				const photoInfo = await FileSystem.getInfoAsync(
+					photoSelected.assets[0].uri
+				)
 
 				if (photoInfo.size && photoInfo.size / 1024 / 1024 > 2) {
 					return toast.show({
@@ -102,7 +104,7 @@ export function Profile() {
 					})
 				}
 
-				setUserPhoto(photoSelected.uri)
+				setUserPhoto(photoSelected.assets[0].uri)
 			}
 		} catch (error) {
 			console.log(error)
@@ -114,7 +116,13 @@ export function Profile() {
 	async function handleProfileUpdate(data: FormDataProps) {
 		try {
 			setIsUpdating(true)
+
+			const userUpdated = user
+			userUpdated.name = data.name
+
 			await api.put('/users', data)
+
+			await updateUserProfile(userUpdated)
 
 			toast.show({
 				title: 'Perfil atualizado com sucesso!',
