@@ -15,12 +15,15 @@ import { Controller, useForm } from 'react-hook-form'
 import { TouchableOpacity } from 'react-native'
 import * as yup from 'yup'
 
+import { useAuth } from '@hooks/useAuth'
+
+import { api } from '@services/api'
+import { AppError } from '@utils/AppError'
+
 import { Button } from '@components/Button'
 import { Input } from '@components/Input'
 import { ScreenHeader } from '@components/ScreenHeader'
 import { UserPhoto } from '@components/UserPhoto'
-
-import { useAuth } from '@hooks/useAuth'
 
 const PHOTO_SIZE = 33
 
@@ -55,13 +58,12 @@ const profileSchema = yup.object({
 })
 
 export function Profile() {
+	const [isUpdating, setIsUpdating] = useState(false)
 	const [photoIsLoading, setPhotoIsLoading] = useState(false)
 	const [userPhoto, setUserPhoto] = useState('https://github.com/mgckaled.png')
 
 	const toast = useToast()
-
 	const { user } = useAuth()
-
 	const {
 		control,
 		handleSubmit,
@@ -85,17 +87,14 @@ export function Profile() {
 				allowsEditing: true
 			})
 
-			if (photoSelected.canceled) {
+			if (photoSelected.cancelled) {
 				return
 			}
 
-			if (photoSelected.assets[0].uri) {
-				const photoInfo = await FileSystem.getInfoAsync(
-					photoSelected.assets[0].uri
-				)
-				console.log(photoInfo)
+			if (photoSelected.uri) {
+				const photoInfo = await FileSystem.getInfoAsync(photoSelected.uri)
 
-				if (photoInfo.size && photoInfo.size / 1024 / 1024 > 5) {
+				if (photoInfo.size && photoInfo.size / 1024 / 1024 > 2) {
 					return toast.show({
 						title: 'Essa imagem é muito grande. Escolha uma de até 5MB.',
 						placement: 'top',
@@ -103,7 +102,7 @@ export function Profile() {
 					})
 				}
 
-				setUserPhoto(photoSelected.assets[0].uri)
+				setUserPhoto(photoSelected.uri)
 			}
 		} catch (error) {
 			console.log(error)
@@ -113,12 +112,35 @@ export function Profile() {
 	}
 
 	async function handleProfileUpdate(data: FormDataProps) {
-		console.log(data)
+		try {
+			setIsUpdating(true)
+			await api.put('/users', data)
+
+			toast.show({
+				title: 'Perfil atualizado com sucesso!',
+				placement: 'top',
+				bgColor: 'green.500'
+			})
+		} catch (error) {
+			const isAppError = error instanceof AppError
+			const title = isAppError
+				? error.message
+				: 'Não foi possível atualizar os dados. Tente novamente mais tarde.'
+
+			toast.show({
+				title,
+				placement: 'top',
+				bgColor: 'red.500'
+			})
+		} finally {
+			setIsUpdating(false)
+		}
 	}
 
 	return (
 		<VStack flex={1}>
 			<ScreenHeader title="Perfil" />
+
 			<ScrollView contentContainerStyle={{ paddingBottom: 36 }}>
 				<Center mt={6} px={10}>
 					{photoIsLoading ? (
@@ -126,8 +148,8 @@ export function Profile() {
 							w={PHOTO_SIZE}
 							h={PHOTO_SIZE}
 							rounded="full"
-							startColor="gray.400"
-							endColor="gray.300"
+							startColor="gray.500"
+							endColor="gray.400"
 						/>
 					) : (
 						<UserPhoto
@@ -142,7 +164,7 @@ export function Profile() {
 							color="green.500"
 							fontWeight="bold"
 							fontSize="md"
-							mt={3}
+							mt={2}
 							mb={8}
 						>
 							Alterar Foto
@@ -233,6 +255,7 @@ export function Profile() {
 						title="Atualizar"
 						mt={4}
 						onPress={handleSubmit(handleProfileUpdate)}
+						isLoading={isUpdating}
 					/>
 				</Center>
 			</ScrollView>
