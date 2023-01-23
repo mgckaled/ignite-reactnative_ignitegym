@@ -20,6 +20,8 @@ import { useAuth } from '@hooks/useAuth'
 import { api } from '@services/api'
 import { AppError } from '@utils/AppError'
 
+import defaulUserPhotoImg from '@assets/userPhotoDefault.png'
+
 import { Button } from '@components/Button'
 import { Input } from '@components/Input'
 import { ScreenHeader } from '@components/ScreenHeader'
@@ -96,7 +98,7 @@ export function Profile() {
 					photoSelected.assets[0].uri
 				)
 
-				if (photoInfo.size && photoInfo.size / 1024 / 1024 > 2) {
+				if (photoInfo.size && photoInfo.size / 1024 / 1024 > 5) {
 					return toast.show({
 						title: 'Essa imagem é muito grande. Escolha uma de até 5MB.',
 						placement: 'top',
@@ -193,7 +195,11 @@ export function Profile() {
 						/>
 					) : (
 						<UserPhoto
-							source={{ uri: userPhoto }}
+							source={
+								user.avatar
+									? { uri: `${api.defaults.baseURL}/avatar/${user.avatar}` }
+									: defaulUserPhotoImg
+							}
 							alt="Foto do usuário"
 							size={PHOTO_SIZE}
 						/>
