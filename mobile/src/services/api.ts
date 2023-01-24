@@ -7,8 +7,6 @@ import {
 	storageAuthTokenSave
 } from '@storage/storageAuthToken'
 
-type SignOut = () => void
-
 type PromiseType = {
 	resolve: (value?: unknown) => void
 	reject: (reason: unknown) => void
@@ -19,16 +17,21 @@ type ProccessQueueParams = {
 	token: string | null
 }
 
+type RegisterInterceptTokenManagerProps = {
+	signOut: () => void
+	refreshTokenUpdated: (newToken: string) => void
+}
+
 type APIInstanceProps = AxiosInstance & {
-	registerInterceptTokenManager: (signOut: SignOut) => () => void
+	registerInterceptTokenManager: ({}: RegisterInterceptTokenManagerProps) => () => void
 }
 
 const api = axios.create({
 	baseURL: 'http://192.168.15.3:3333'
 }) as APIInstanceProps
 
-let failedQueue: Array<PromiseType> = []
 let isRefreshing = false
+let failedQueue: Array<PromiseType> = []
 
 const proccessQueue = ({ error, token = null }: ProccessQueueParams): void => {
 	failedQueue.forEach(request => {
@@ -42,7 +45,7 @@ const proccessQueue = ({ error, token = null }: ProccessQueueParams): void => {
 	failedQueue = []
 }
 
-api.registerInterceptTokenManager = singOut => {
+api.registerInterceptTokenManager = ({ signOut, refreshTokenUpdated }) => {
 	const interceptTokenManager = api.interceptors.response.use(
 		response => response,
 		async requestError => {
@@ -54,7 +57,7 @@ api.registerInterceptTokenManager = singOut => {
 					const oldToken = await storageAuthTokenGet()
 
 					if (!oldToken) {
-						singOut()
+						signOut()
 						return Promise.reject(requestError)
 					}
 
@@ -87,12 +90,14 @@ api.registerInterceptTokenManager = singOut => {
 							] = `Bearer ${data.token}`
 							originalRequest.headers['Authorization'] = `Bearer ${data.token}`
 
+							refreshTokenUpdated(data.token)
 							proccessQueue({ error: null, token: data.token })
 
+							console.log('TOKEN ATUALIZADO')
 							resolve(originalRequest)
 						} catch (error: any) {
 							proccessQueue({ error, token: null })
-							singOut()
+							signOut()
 							reject(error)
 						} finally {
 							isRefreshing = false
@@ -100,7 +105,7 @@ api.registerInterceptTokenManager = singOut => {
 					})
 				}
 
-				singOut()
+				signOut()
 			}
 
 			if (requestError.response && requestError.response.data) {
