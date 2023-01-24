@@ -2,7 +2,10 @@ import axios, { AxiosInstance } from 'axios'
 
 import { AppError } from '@utils/AppError'
 
-import { storageAuthTokenGet } from '@storage/storageAuthToken'
+import {
+	storageAuthTokenGet,
+	storageAuthTokenSave
+} from '@storage/storageAuthToken'
 
 type SignOut = () => void
 
@@ -11,16 +14,33 @@ type PromiseType = {
 	reject: (reason: unknown) => void
 }
 
+type ProccessQueueParams = {
+	error: Error | null
+	token: string | null
+}
+
 type APIInstanceProps = AxiosInstance & {
 	registerInterceptTokenManager: (signOut: SignOut) => () => void
 }
 
-let isRefreshing = false
-let failedQueue: Array<PromiseType> = []
-
 const api = axios.create({
-	baseURL: 'http://192.168.15.7:3333'
+	baseURL: 'http://192.168.15.3:3333'
 }) as APIInstanceProps
+
+let failedQueue: Array<PromiseType> = []
+let isRefreshing = false
+
+const proccessQueue = ({ error, token = null }: ProccessQueueParams): void => {
+	failedQueue.forEach(request => {
+		if (error) {
+			request.reject(error)
+		} else {
+			request.resolve(token)
+		}
+	})
+
+	failedQueue = []
+}
 
 api.registerInterceptTokenManager = singOut => {
 	const interceptTokenManager = api.interceptors.response.use(
@@ -45,7 +65,7 @@ api.registerInterceptTokenManager = singOut => {
 							failedQueue.push({ resolve, reject })
 						})
 							.then(token => {
-								originalRequest.headers.Authorization = `Bearer ${token}`
+								originalRequest.headers['Authorization'] = `Bearer ${token}`
 								return axios(originalRequest)
 							})
 							.catch(error => {
@@ -54,6 +74,30 @@ api.registerInterceptTokenManager = singOut => {
 					}
 
 					isRefreshing = true
+
+					return new Promise(async (resolve, reject) => {
+						try {
+							const { data } = await api.post('/sessions/refresh-token', {
+								token: oldToken
+							})
+							await storageAuthTokenSave(data.token)
+
+							api.defaults.headers.common[
+								'Authorization'
+							] = `Bearer ${data.token}`
+							originalRequest.headers['Authorization'] = `Bearer ${data.token}`
+
+							proccessQueue({ error: null, token: data.token })
+
+							resolve(originalRequest)
+						} catch (error: any) {
+							proccessQueue({ error, token: null })
+							singOut()
+							reject(error)
+						} finally {
+							isRefreshing = false
+						}
+					})
 				}
 
 				singOut()
